@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import SectionHeader from "@/components/SectionHeader";
 import ImageUploader from "@/components/ImageUploader";
@@ -7,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import TextOutputPanel from "@/components/TextOutputPanel";
+import { TextEditor } from "@/components/TextEditor";
 
 const Demo = () => {
   const [image, setImage] = useState<File | null>(null);
@@ -104,75 +104,87 @@ ${result}
   };
 
   return (
-    <div className="pt-24">
-      <div className="section-container">
-        <SectionHeader 
-          title="Interactive Demo" 
-          subtitle="Try our Kannada handwritten text recognition model with enhanced output formatting"
-          centered={true}
-        />
-        
-        <div className="max-w-4xl mx-auto">
-          <Card>
-            <CardContent className="p-6">
-              <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-4">Upload Handwritten Text</h3>
-                <p className="text-muted-foreground mb-6">
-                  Upload a clear image of handwritten Kannada text. For best results, use the background removal tool to isolate text. 
-                  We support JPG, PNG, and JPEG formats.
-                </p>
-                <ImageUploader onImageUpload={handleImageUpload} />
-              </div>
-              
-              <div className="flex justify-center mt-8 mb-8">
-                <Button 
-                  onClick={handleRecognition}
-                  disabled={!image || loading}
-                  className="px-8"
-                >
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {loading ? "Processing..." : "Recognize Text"}
-                </Button>
-              </div>
-              
-              {result && (
-                <TextOutputPanel
-                  result={result}
-                  confidence={confidence}
-                  wordCount={wordCount}
-                  charCount={charCount}
-                  processTime={processTime}
-                  wordLimit={wordLimit}
-                  onDownload={handleDownload}
-                  onResultChange={handleResultChange}
-                />
-              )}
-            </CardContent>
-          </Card>
-          
-          <div className="mt-12">
-            <h3 className="text-xl font-semibold mb-4">Usage Guidelines</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-4 bg-gray-50 rounded-lg border">
-                <h4 className="font-medium mb-2">Background Removal</h4>
-                <p className="text-sm text-muted-foreground">
-                  Use our background removal tool to isolate text from noisy backgrounds for better recognition accuracy.
-                </p>
-              </div>
-              
-              <div className="p-4 bg-gray-50 rounded-lg border">
-                <h4 className="font-medium mb-2">Image Quality</h4>
-                <p className="text-sm text-muted-foreground">
-                  For optimal results, use well-lit images with good contrast. The text should be clearly visible against the background.
-                </p>
-              </div>
-              
-              <div className="p-4 bg-gray-50 rounded-lg border">
-                <h4 className="font-medium mb-2">Word Limits</h4>
-                <p className="text-sm text-muted-foreground">
-                  For best performance, try to keep your text under the recommended word limit. Exceeding limits may affect processing speed.
-                </p>
-              </div>
+    <div className="container mx-auto px-4 py-8">
+      <SectionHeader
+        title="Interactive Demo"
+        subtitle="Try our Kannada handwritten text recognition model with enhanced output formatting"
+        centered={true}
+      />
+      
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Image Upload Section */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="mb-8">
+              <h3 className="text-xl font-semibold mb-4">Upload Handwritten Text</h3>
+              <p className="text-muted-foreground mb-6">
+                Upload a clear image of handwritten Kannada text. For best results, use the background removal tool to isolate text. 
+                We support JPG, PNG, and JPEG formats.
+              </p>
+              <ImageUploader onImageUpload={handleImageUpload} />
+            </div>
+            
+            <div className="flex justify-center mt-8 mb-8">
+              <Button 
+                onClick={handleRecognition}
+                disabled={!image || loading}
+                className="px-8"
+              >
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {loading ? "Processing..." : "Recognize Text"}
+              </Button>
+            </div>
+            
+            {result && (
+              <TextOutputPanel
+                result={result}
+                confidence={confidence}
+                wordCount={wordCount}
+                charCount={charCount}
+                processTime={processTime}
+                wordLimit={wordLimit}
+                onDownload={handleDownload}
+                onResultChange={handleResultChange}
+              />
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Text Editor Section */}
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-xl font-semibold mb-4">Text Editor & Translation</h3>
+            <p className="text-muted-foreground mb-6">
+              Edit, format, and translate your text with our advanced editor. 
+              Use the Add Text button or Ctrl+Shift+A to add more content.
+            </p>
+            <TextEditor />
+          </CardContent>
+        </Card>
+
+        {/* Usage Guidelines */}
+        <div className="mt-12">
+          <h3 className="text-xl font-semibold mb-4">Usage Guidelines</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-4 bg-gray-50 rounded-lg border">
+              <h4 className="font-medium mb-2">Background Removal</h4>
+              <p className="text-sm text-muted-foreground">
+                Use our background removal tool to isolate text from noisy backgrounds for better recognition accuracy.
+              </p>
+            </div>
+            
+            <div className="p-4 bg-gray-50 rounded-lg border">
+              <h4 className="font-medium mb-2">Image Quality</h4>
+              <p className="text-sm text-muted-foreground">
+                For optimal results, use well-lit images with good contrast. The text should be clearly visible against the background.
+              </p>
+            </div>
+            
+            <div className="p-4 bg-gray-50 rounded-lg border">
+              <h4 className="font-medium mb-2">Word Limits</h4>
+              <p className="text-sm text-muted-foreground">
+                For best performance, try to keep your text under the recommended word limit. Exceeding limits may affect processing speed.
+              </p>
             </div>
           </div>
         </div>
