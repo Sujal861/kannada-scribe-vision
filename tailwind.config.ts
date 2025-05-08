@@ -81,6 +81,7 @@ export default {
 			fontFamily: {
 				inter: ["Inter", "sans-serif"],
 				poppins: ["Poppins", "sans-serif"],
+				kannada: ["Noto Sans Kannada", "sans-serif"],
 			},
 		},
 	},

@@ -1,12 +1,12 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SectionHeader from "@/components/SectionHeader";
 import ImageUploader from "@/components/ImageUploader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Download } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Progress } from "@/components/ui/progress";
+import TextOutputPanel from "@/components/TextOutputPanel";
 
 const Demo = () => {
   const [image, setImage] = useState<File | null>(null);
@@ -16,6 +16,7 @@ const Demo = () => {
   const [wordCount, setWordCount] = useState<number | null>(null);
   const [charCount, setCharCount] = useState<number | null>(null);
   const [processTime, setProcessTime] = useState<number | null>(null);
+  const [wordLimit, setWordLimit] = useState<number>(50);
   
   const handleImageUpload = (file: File) => {
     setImage(file);
@@ -24,6 +25,21 @@ const Demo = () => {
     setWordCount(null);
     setCharCount(null);
     setProcessTime(null);
+  };
+  
+  const calculateTextMetrics = (text: string) => {
+    const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+    const chars = text.replace(/\s+/g, '').length;
+    
+    setWordCount(words.length);
+    setCharCount(chars);
+    
+    return { words: words.length, chars };
+  };
+  
+  const handleResultChange = (newText: string) => {
+    setResult(newText);
+    calculateTextMetrics(newText);
   };
   
   const handleRecognition = async () => {
@@ -45,8 +61,7 @@ const Demo = () => {
       
       // Calculate metrics
       setConfidence(94.7);
-      setWordCount(recognizedText.split(/\s+/).length);
-      setCharCount(recognizedText.replace(/\s+/g, '').length);
+      calculateTextMetrics(recognizedText);
       setProcessTime(Number(((performance.now() - startTime) / 1000).toFixed(2)));
       
       toast.success("Text recognition completed");
@@ -70,6 +85,7 @@ Confidence Score: ${confidence?.toFixed(1)}%
 Word Count: ${wordCount}
 Character Count: ${charCount}
 Processing Time: ${processTime}s
+Word Limit Status: ${wordCount && wordLimit ? (wordCount > wordLimit ? "EXCEEDED" : "Within limit") : "N/A"}
 
 RECOGNIZED TEXT:
 ------------------------
@@ -92,7 +108,7 @@ ${result}
       <div className="section-container">
         <SectionHeader 
           title="Interactive Demo" 
-          subtitle="Try our Kannada handwritten text recognition model with background removal"
+          subtitle="Try our Kannada handwritten text recognition model with enhanced output formatting"
           centered={true}
         />
         
@@ -120,50 +136,16 @@ ${result}
               </div>
               
               {result && (
-                <div className="mt-8 space-y-6">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">Recognition Results</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                      <div className="bg-gray-50 p-3 rounded-lg border">
-                        <p className="text-sm text-muted-foreground mb-1">Confidence Score</p>
-                        <div className="flex items-center gap-2">
-                          <Progress value={confidence || 0} className="h-2" />
-                          <span className="font-medium">{confidence?.toFixed(1)}%</span>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gray-50 p-3 rounded-lg border">
-                        <p className="text-sm text-muted-foreground mb-1">Processing Time</p>
-                        <p className="font-medium">{processTime} seconds</p>
-                      </div>
-                      
-                      <div className="bg-gray-50 p-3 rounded-lg border">
-                        <p className="text-sm text-muted-foreground mb-1">Word Count</p>
-                        <p className="font-medium">{wordCount} words</p>
-                      </div>
-                      
-                      <div className="bg-gray-50 p-3 rounded-lg border">
-                        <p className="text-sm text-muted-foreground mb-1">Character Count</p>
-                        <p className="font-medium">{charCount} characters</p>
-                      </div>
-                    </div>
-                    
-                    <div className="p-4 bg-gray-50 rounded-lg border">
-                      <p className="text-sm text-muted-foreground mb-2">Recognized Text:</p>
-                      <div className="p-4 bg-white rounded border min-h-[100px]">
-                        <p className="text-lg font-kannada">{result}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-end mt-4">
-                      <Button variant="outline" size="sm" onClick={handleDownload}>
-                        <Download className="mr-2 h-4 w-4" />
-                        Download Results
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                <TextOutputPanel
+                  result={result}
+                  confidence={confidence}
+                  wordCount={wordCount}
+                  charCount={charCount}
+                  processTime={processTime}
+                  wordLimit={wordLimit}
+                  onDownload={handleDownload}
+                  onResultChange={handleResultChange}
+                />
               )}
             </CardContent>
           </Card>
@@ -186,9 +168,9 @@ ${result}
               </div>
               
               <div className="p-4 bg-gray-50 rounded-lg border">
-                <h4 className="font-medium mb-2">Limitations</h4>
+                <h4 className="font-medium mb-2">Word Limits</h4>
                 <p className="text-sm text-muted-foreground">
-                  The model may struggle with extremely stylized handwriting, low-quality images, or text with excessive background noise.
+                  For best performance, try to keep your text under the recommended word limit. Exceeding limits may affect processing speed.
                 </p>
               </div>
             </div>
