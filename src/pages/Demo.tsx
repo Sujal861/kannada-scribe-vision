@@ -60,8 +60,8 @@ const Demo = () => {
     <div className="pt-24">
       <div className="section-container">
         <SectionHeader 
-          title="Demo" 
-          subtitle="Try our Kannada handwritten text recognition model"
+          title="Interactive Demo" 
+          subtitle="Try our Kannada handwritten text recognition model with background removal"
           centered={true}
         />
         
@@ -71,7 +71,8 @@ const Demo = () => {
               <div className="mb-8">
                 <h3 className="text-xl font-semibold mb-4">Upload Handwritten Text</h3>
                 <p className="text-muted-foreground mb-6">
-                  Upload a clear image of handwritten Kannada text. For best results, ensure the image has good lighting and contrast. We support JPG, PNG, and JPEG formats.
+                  Upload a clear image of handwritten Kannada text. For best results, use the background removal tool to isolate text. 
+                  We support JPG, PNG, and JPEG formats.
                 </p>
                 <ImageUploader onImageUpload={handleImageUpload} />
               </div>
@@ -124,9 +125,9 @@ const Demo = () => {
             <h3 className="text-xl font-semibold mb-4">Usage Guidelines</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="p-4 bg-gray-50 rounded-lg border">
-                <h4 className="font-medium mb-2">Supported Text</h4>
+                <h4 className="font-medium mb-2">Background Removal</h4>
                 <p className="text-sm text-muted-foreground">
-                  Our model works best with clear handwritten Kannada script. It can recognize individual characters, words, and complete sentences.
+                  Use our background removal tool to isolate text from noisy backgrounds for better recognition accuracy.
                 </p>
               </div>
               
